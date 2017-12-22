@@ -15,7 +15,7 @@ int InitScanner (const char *FileName) {
         cout << "[LOG]  Open Success" << endl;
         return 0;
     } else {
-        cout << "[ERROR]  Open Failed" << endl;
+        cout << "[ERROR]    Open Failed" << endl;
         return 1;
     }
 }
