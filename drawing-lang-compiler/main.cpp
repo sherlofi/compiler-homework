@@ -1,7 +1,7 @@
 //
 // Created by sherlofi on 2017/12/12.
 //
-#include "lexer.h"
+#include "lexer.hpp"
 #include <cstdio>
 
 using namespace std;

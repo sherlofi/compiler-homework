@@ -1,5 +1,5 @@
 #include <iostream>
-#include "lexer.h"
+#include "lexer.hpp"
 #include <string>
 #include <fstream>
 
@@ -9,23 +9,24 @@ using namespace std;
 
 static ifstream exampleFile;
 
-int InitScanner (const char *FileName) {
+int InitScanner(const char *FileName) {
     exampleFile.open(FileName);
     if (exampleFile.is_open()) {
-        cout << "[LOG]  Open Success" << endl;
+        cout << "[INFO]  Open Success" << endl;
+
         return 0;
     } else {
-        cout << "[ERROR]    Open Failed" << endl;
+        cout << "[ERROR] Open Failed" << endl;
         return 1;
     }
 }
 
-void CloseScanner (void) {
-    if(exampleFile.is_open())
+void CloseScanner(void) {
+    if (exampleFile.is_open())
         exampleFile.close();
 }
 
-static Token CheckInTable (const string String) {
+static Token CheckInTable(const string String) {
     for (int loop = 0; loop < sizeof(TokenTable) / sizeof(Token); loop++) {
         if (String.compare(TokenTable[loop].lexeme) == 0)
             return TokenTable[loop];
@@ -35,12 +36,12 @@ static Token CheckInTable (const string String) {
     return errortoken;
 }
 
-static char GetChar (void) {
+static char GetChar(void) {
     char Char = exampleFile.get();
     return toupper(Char);
 }
 
-Token GetToken (void) {
+Token GetToken(void) {
     Token token = {ERRTOKEN, "", 0.0, NULL};
     char Char;
 
