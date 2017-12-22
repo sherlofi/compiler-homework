@@ -1,11 +1,10 @@
 //
 // Created by sherlofi on 2017/12/12.
 //
-#include "dr_lexical_analysis.h"
+#include "lexer.h"
 #include <cstdio>
 
 using namespace std;
-Token CheckInTable(const string String);
 
 int main(int argc, char *argv[]) {
     Token token;
