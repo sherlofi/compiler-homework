@@ -4,19 +4,20 @@
 #include <fstream>
 
 #define TOKEN_LEN 100
-
+#include <cstdlib>
 using namespace std;
 
 static ifstream exampleFile;
+unsigned int LineNo;
 
 int InitScanner(const char *FileName) {
+    LineNo = 1;
     exampleFile.open(FileName);
     if (exampleFile.is_open()) {
-        cout << "[INFO]  Open Success" << endl;
-
+        cout << "[lexer]  Open Success" << endl;
         return 0;
     } else {
-        cout << "[ERROR] Open Failed" << endl;
+        cout << "[lexer] Open Failed" << endl;
         return 1;
     }
 }
@@ -51,6 +52,8 @@ Token GetToken(void) {
             token.type = NONTOKEN;
             return token;
         }
+        if (Char == '\n')
+            LineNo++;
         if (!isspace(Char))
             break;
     }
@@ -88,7 +91,7 @@ Token GetToken(void) {
         }
         exampleFile.unget();
         token.type = CONST_ID;
-        token.value = stod(token.lexeme, nullptr);
+        token.value = atof(token.lexeme.c_str());
     } else {
         switch (Char) {
             case ';':
@@ -134,6 +137,7 @@ Token GetToken(void) {
                     token.type = POWER;
                     break;
                 } else {
+                    exampleFile.unget();
                     token.type = MUL;
                     break;
                 }

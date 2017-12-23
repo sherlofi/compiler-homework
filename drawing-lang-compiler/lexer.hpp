@@ -21,9 +21,10 @@ enum TokenType {
 };
 
 struct Token {
-    TokenType type;
-    std::string lexeme;
+    enum TokenType type;
+    std::string lexeme;   //读入的原始单词
     double value;
+
     double (*FuncPtr)(double);
 };
 
@@ -48,8 +49,12 @@ static Token TokenTable[] = {
         {DRAW,     "DRAW",   0.0,       nullptr}
 };
 
+extern unsigned int LineNo;
+
 extern int InitScanner(const char *);
+
 extern Token GetToken(void);
+
 extern void CloseScanner(void);
 
 #endif //COMPILER_HOMEWORK_DR_LEXICAL_ANALYSIS_H

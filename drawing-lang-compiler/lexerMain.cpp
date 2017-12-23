@@ -6,11 +6,11 @@
 
 using namespace std;
 
-int main(int argc, char *argv[]) {
+int main() {
     Token token;
-    if (InitScanner(argv[1]))
+    if (InitScanner("test1.txt"))
         return 1;       //打开失败，退出程序
-    printf("\n记号类别   字符串      常数值       函数指针\n");
+    printf("\nTokenType   Lexeme      Value       Pointer\n");
     printf("------------------------------------------------\n");
     while (1) {
         token = GetToken();
