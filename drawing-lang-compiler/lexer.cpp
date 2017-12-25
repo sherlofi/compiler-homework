@@ -2,29 +2,28 @@
 #include "lexer.hpp"
 #include <string>
 #include <fstream>
-
-#define TOKEN_LEN 100
 #include <cstdlib>
+
 using namespace std;
 
-static ifstream exampleFile;
+static ifstream ExampleFile;
 unsigned int LineNo;
 
 int InitScanner(const char *FileName) {
     LineNo = 1;
-    exampleFile.open(FileName);
-    if (exampleFile.is_open()) {
+    ExampleFile.open(FileName);
+    if (ExampleFile.is_open()) {
         cout << "[lexer]  Open Success" << endl;
         return 0;
     } else {
-        cout << "[lexer] Open Failed" << endl;
+        cout << "[lexer]  Open Failed" << endl;
         return 1;
     }
 }
 
 void CloseScanner(void) {
-    if (exampleFile.is_open())
-        exampleFile.close();
+    if (ExampleFile.is_open())
+        ExampleFile.close();
 }
 
 static Token CheckInTable(const string String) {
@@ -38,7 +37,7 @@ static Token CheckInTable(const string String) {
 }
 
 static char GetChar(void) {
-    char Char = exampleFile.get();
+    char Char = ExampleFile.get();
     return toupper(Char);
 }
 
@@ -68,7 +67,7 @@ Token GetToken(void) {
             else
                 break;
         }
-        exampleFile.unget();
+        ExampleFile.unget();
         token = CheckInTable(token.lexeme);
         return token;
     } else if (isdigit(Char)) {
@@ -89,7 +88,7 @@ Token GetToken(void) {
                     break;
             }
         }
-        exampleFile.unget();
+        ExampleFile.unget();
         token.type = CONST_ID;
         token.value = atof(token.lexeme.c_str());
     } else {
@@ -116,7 +115,7 @@ Token GetToken(void) {
                         Char = GetChar();
                     return GetToken();
                 } else {
-                    exampleFile.unget();
+                    ExampleFile.unget();
                     token.type = MINUS;
                     break;
                 }
@@ -127,7 +126,7 @@ Token GetToken(void) {
                         Char = GetChar();
                     return GetToken();
                 } else {
-                    exampleFile.unget();
+                    ExampleFile.unget();
                     token.type = DIV;
                     break;
                 }
@@ -137,7 +136,7 @@ Token GetToken(void) {
                     token.type = POWER;
                     break;
                 } else {
-                    exampleFile.unget();
+                    ExampleFile.unget();
                     token.type = MUL;
                     break;
                 }

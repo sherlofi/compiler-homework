@@ -1,7 +1,3 @@
-//
-// Created by sherlofi on 2017/12/11.
-//
-
 #ifndef COMPILER_HOMEWORK_DR_LEXICAL_ANALYSIS_H
 #define COMPILER_HOMEWORK_DR_LEXICAL_ANALYSIS_H
 
@@ -22,7 +18,7 @@ enum TokenType {
 
 struct Token {
     enum TokenType type;
-    std::string lexeme;   //读入的原始单词
+    std::string lexeme;   //单词的字面值
     double value;
 
     double (*FuncPtr)(double);

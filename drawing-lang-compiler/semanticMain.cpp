@@ -1,7 +1,3 @@
-//
-// Created by sherlofi on 2017/12/23.
-//
-
 #include <cstdio>
 #include"semantic.hpp"
 
@@ -19,21 +15,21 @@ static LRESULT CALLBACK WndProc(HWND, UINT, WPARAM, LPARAM); //----------窗口�
 
 //----------Window程序主函数
 int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow) {
+
 //保存原文件路径
-    strcpy(SrcFilePath, "test3.txt");
+    strcpy(SrcFilePath, "test.txt");
+
 //初始化窗口
     if (!PrepareWindow(hInstance, hPrevInstance, nCmdShow)) {
         MessageBox(nullptr, "Window Initialize failed !", "ERROR !", MB_OK);
         return 1;
     }
+
 //检查要分析的源程序文件
     if (!CheckSrcFile(SrcFilePath))
         return 1;
 
-//------------------------------------
-//调用绘图语言解释器
     Parser(SrcFilePath);
-//------------------------------------
 
 //进入window消息循环
     MSG Msg;

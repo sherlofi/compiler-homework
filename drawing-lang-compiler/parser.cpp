@@ -50,14 +50,12 @@
 static Token token;
 using std::string;
 
-//------------------ 辅助函数
 static void FetchToken();
 static void MatchToken(enum TokenType TheToken);
 static void SyntaxError(int CaseOf);
 static void ErrMsg(unsigned LineNo, string description,string lexeme);
 static void PrintSyntaxTree(struct ExprNode *root, int indent);
 
-//------------------ 非终结符的递归下降子程序
 static void Program();
 static void Statement();
 static void OriginStatement();
@@ -70,53 +68,39 @@ static struct ExprNode *Factor();
 static struct ExprNode *Component();
 static struct ExprNode *Atom();
 
-//------------------- 外部接口与语法书构造函数
-extern void Parser(const char *SrcFilePtr);
 static struct ExprNode *MakeExprNode(enum TokenType opcode, ...);
 
-//------------- 获取一个记号
 static void FetchToken() {
     token = GetToken();
     if(token.type == ERRTOKEN)
         SyntaxError(1);
 }
 
-//------------- 匹配记号
 static void MatchToken(enum TokenType TheToken) {
     if(token.type != TheToken)
         SyntaxError(2);
     FetchToken();
 }
 
-//-------------- 语法错误处理
 static void SyntaxError(int CaseOf) {
     switch (CaseOf){
         case 1:
-            ErrMsg(LineNo, "错误记号", token.lexeme);
+            ErrMsg(LineNo, "Wrong Token", token.lexeme);
             break;
         case 2:
-            ErrMsg(LineNo, "不是预期记号", token.lexeme);
+            ErrMsg(LineNo, "Not Expected Token", token.lexeme);
             break;
     }
 }
 
-//--------------- 打印错误信息
 void ErrMsg(unsigned LineNo, string description, string lexeme) {
 #ifdef PARSER_DEBUG
-    printf("Line No %2d : %s %s !\n", LineNo, description.c_str(), lexeme.c_str());
+    printf("Line No %2d : %s [%s] !\n", LineNo, description.c_str(), lexeme.c_str());
 #else
     char msg[256];
-    sprintf(msg, "Line No %2d : %s %s !", LineNo, description.c_str(), lexeme.c_str());
-#endif
-
-#ifdef _VC_COMPILER
+    sprintf(msg, "Line No %2d : %s [%s] !", LineNo, description.c_str(), lexeme.c_str());
     MessageBox(NULL, msg, "error!", MB_OK);
 #endif
-
-#ifdef _BC_COMPILER
-    printf("%s\n", msg);
-#endif
-
     CloseScanner();
     exit(1);
 }
@@ -297,11 +281,11 @@ static void ForStatement()
     MatchToken(DRAW);
     call_match("DRAW");
     MatchToken(L_BRACKET);
-    call_match("(");//                                                eg:draw（
-    x_ptr = Expression();//跟节点                                  eg:t
+    call_match("(");
+    x_ptr = Expression();
     MatchToken(COMMA);
-    call_match(",");//                                                eg:,
-    y_ptr = Expression();//根节点
+    call_match(",");
+    y_ptr = Expression();
     MatchToken(R_BRACKET);
     call_match(")");
 #ifndef PARSER_DEBUG

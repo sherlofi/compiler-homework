@@ -1,11 +1,9 @@
 #include"semantic.hpp"
 extern double
-        Parameter,//参数T的存储空间：记录t每次加一点的变化
-        Origin_x, Origin_y,//横纵坐标平移距离
-        Scale_x, Scale_y,//横纵比例因子
-        Rot_angle;//旋转角度
-
-static void CalcCoord(struct ExprNode *Hor_Exp, struct ExprNode *Ver_Exp, double &Hor_x, double &Ver_y);
+        Parameter,
+        Origin_x, Origin_y,
+        Scale_x, Scale_y,
+        Rot_angle;
 
 static void CalcCoord(struct ExprNode *Hor_Exp,//横坐标表达式语法树的根节点
                       struct ExprNode *Ver_Exp,//纵坐标表达式语法树的根节点
@@ -14,9 +12,9 @@ static void CalcCoord(struct ExprNode *Hor_Exp,//横坐标表达式语法树的�
 {
     double HorCord, VerCord, Hor_tmp;
     HorCord = GetExprValue(Hor_Exp);
-    VerCord = GetExprValue(Ver_Exp);//根据表达式的语法树计算原始坐标
+    VerCord = GetExprValue(Ver_Exp);
     HorCord *= Scale_x;
-    VerCord *= Scale_y;//进行比例变换
+    VerCord *= Scale_y;   //进行比例变换
     Hor_tmp = HorCord * cos(Rot_angle) + VerCord * sin(Rot_angle);
     VerCord = VerCord * cos(Rot_angle) - HorCord * sin(Rot_angle);
     HorCord = Hor_tmp;    //进行旋转变换
@@ -24,7 +22,7 @@ static void CalcCoord(struct ExprNode *Hor_Exp,//横坐标表达式语法树的�
     VerCord += Origin_y;    //进行平移变换
     Hor_x = HorCord;
     Ver_y = VerCord;    //返回变换后点的坐标
-}//没有返回值
+}
 
 //----------循环绘制点的坐标
 void DrawLoop(double Start,//起始
