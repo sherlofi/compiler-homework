@@ -1,15 +1,16 @@
 #include <iostream>
-#include "lexer.hpp"
 #include <string>
 #include <fstream>
 #include <cstdlib>
+
+#include "lexer.hpp"
 
 using namespace std;
 
 static ifstream ExampleFile;
 unsigned int LineNo;
 
-int InitScanner(const char *FileName) {
+int InitLexer(const char *FileName) {
     LineNo = 1;
     ExampleFile.open(FileName);
     if (ExampleFile.is_open()) {
@@ -21,7 +22,7 @@ int InitScanner(const char *FileName) {
     }
 }
 
-void CloseScanner(void) {
+void CloseLexer(void) {
     if (ExampleFile.is_open())
         ExampleFile.close();
 }
@@ -62,7 +63,7 @@ Token GetToken(void) {
     if (isalpha(Char)) {
         while (true) {
             Char = GetChar();
-            if (isalnum(Char))
+            if (isalpha(Char))
                 token.lexeme += Char;
             else
                 break;
@@ -94,7 +95,7 @@ Token GetToken(void) {
     } else {
         switch (Char) {
             case ';':
-                token.type = SEMICO;
+                token.type = SEMICOLON;
                 break;
             case '(':
                 token.type = L_BRACKET;

@@ -1,15 +1,10 @@
 #include"semantic.hpp"
-extern double
-        Parameter,
+extern double Parameter,
         Origin_x, Origin_y,
         Scale_x, Scale_y,
         Rot_angle;
 
-static void CalcCoord(struct ExprNode *Hor_Exp,//横坐标表达式语法树的根节点
-                      struct ExprNode *Ver_Exp,//纵坐标表达式语法树的根节点
-                      double &Hor_x,//点横坐标值，起返回值的作用
-                      double &Ver_y)//点纵坐标值，起返回值的作用
-{
+static void CalcCoord(struct ExprNode *Hor_Exp, struct ExprNode *Ver_Exp, double &Hor_x, double &Ver_y) {
     double HorCord, VerCord, Hor_tmp;
     HorCord = GetExprValue(Hor_Exp);
     VerCord = GetExprValue(Ver_Exp);
@@ -25,24 +20,17 @@ static void CalcCoord(struct ExprNode *Hor_Exp,//横坐标表达式语法树的�
 }
 
 //----------循环绘制点的坐标
-void DrawLoop(double Start,//起始
-              double End,//终止
-              double Step,//步长
-              struct ExprNode *HorPtr,//横坐标表达式语法树的根节点
-              struct ExprNode *VerPtr)//纵坐标表达式语法树的根节点
-{
+void DrawLoop(double Start,double End,double Step, struct ExprNode *HorPtr, struct ExprNode *VerPtr) {
     extern double Parameter;
     double x, y;
-    for (Parameter = Start; Parameter <= End; Parameter += Step)//把t在范围内的每一个值带入计算
-    {
+    for (Parameter = Start; Parameter <= End; Parameter += Step) {  //把t在范围内的每一个值带入计算
         CalcCoord(HorPtr, VerPtr, x, y);//计算要绘制店的实际坐标
         DrawPixel((unsigned long) x, (unsigned long) y);//绘制这个点
     }
 }
 
 //----------计算表达式的值
-double GetExprValue(struct ExprNode *root)//参数是表达式的根
-{//后续遍历语法树  根据不同的节点类型计算当前根节点的值
+double GetExprValue(struct ExprNode *root) {//后续遍历语法树  根据不同的节点类型计算当前根节点的值
     if (root == NULL)
         return 0.0;
     switch (root->OpCode) {
@@ -93,5 +81,5 @@ void DelExprTree(struct ExprNode *root) {
 }
 
 void DrawPixel(unsigned long x, unsigned long y) {
-    SetPixel(hDC,(int)x,(int)y,black);
+    SetPixel(hDC,(int)x,(int)y,red);
 }

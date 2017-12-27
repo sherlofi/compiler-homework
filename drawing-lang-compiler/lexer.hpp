@@ -8,7 +8,7 @@ enum TokenType {
     ORIGIN, SCALE, ROT, IS,
     TO, STEP, DRAW, FOR, FROM,
     T,
-    SEMICO, L_BRACKET, R_BRACKET, COMMA,
+    SEMICOLON, L_BRACKET, R_BRACKET, COMMA,
     PLUS, MINUS, MUL, DIV, POWER,
     FUNC,
     CONST_ID,
@@ -47,10 +47,10 @@ static Token TokenTable[] = {
 
 extern unsigned int LineNo;
 
-extern int InitScanner(const char *);
+extern int InitLexer(const char *);
 
 extern Token GetToken(void);
 
-extern void CloseScanner(void);
+extern void CloseLexer(void);
 
 #endif //COMPILER_HOMEWORK_DR_LEXICAL_ANALYSIS_H

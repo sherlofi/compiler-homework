@@ -1,54 +1,37 @@
 //
 // Created by sherlofi on 2017/12/23.
 //
-#include "parser.hpp"
 #include <cstdarg>
 #include <cstdio>
 #include <cstdlib>
-
 //#define PARSER_DEBUG
 
+#include "parser.hpp"
+
 #ifndef PARSER_DEBUG
-
-#include "semantic.hpp"
-
+    #include "semantic.hpp"
 #endif
 
 #ifdef PARSER_DEBUG
     #define enter(x) printf("enter in   ");printf(x);printf("\n")
-#else
-    #define enter(x)
-#endif
-
-#ifdef  PARSER_DEBUG
     #define back(x) printf("exit from   ");printf(x);printf("\n")
-#else
-    #define back(x)
-#endif
-
-#ifdef  PARSER_DEBUG
-#define call_match(x) printf("match token  ");printf(x);printf("\n")
-#else
-#define call_match(x)
-#endif
-
-#ifdef  PARSER_DEBUG
+    #define call_match(x) printf("match token  ");printf(x);printf("\n")
     #define Tree_trace(x) PrintSyntaxTree(x,1);
-#else
-    #define Tree_trace
-#endif
-
-#ifdef PARSER_DEBUG
     double Parameter = 0;
 #else
+    #define enter(x)
+    #define back(x)
+    #define call_match(x)
+    #define Tree_trace
     double Parameter = 0,
-    Origin_x = 0, Origin_y = 0,
-    Scale_x = 1, Scale_y = 1,
-    Rot_angle = 0;
+            Origin_x = 0, Origin_y = 0,
+            Scale_x = 1, Scale_y = 1,
+            Rot_angle = 0;
 #endif
 
-static Token token;
 using std::string;
+
+static Token token;
 
 static void FetchToken();
 static void MatchToken(enum TokenType TheToken);
@@ -67,7 +50,6 @@ static struct ExprNode *Term();
 static struct ExprNode *Factor();
 static struct ExprNode *Component();
 static struct ExprNode *Atom();
-
 static struct ExprNode *MakeExprNode(enum TokenType opcode, ...);
 
 static void FetchToken() {
@@ -101,7 +83,7 @@ void ErrMsg(unsigned LineNo, string description, string lexeme) {
     sprintf(msg, "Line No %2d : %s [%s] !", LineNo, description.c_str(), lexeme.c_str());
     MessageBox(NULL, msg, "error!", MB_OK);
 #endif
-    CloseScanner();
+    CloseLexer();
     exit(1);
 }
 
@@ -151,11 +133,11 @@ void PrintSyntaxTree(struct ExprNode *root, int indent) {
 
 void Parser(const char *SrcFilePtr) {
     enter("Parser");
-    if(InitScanner(SrcFilePtr))
+    if(InitLexer(SrcFilePtr))
         return;
     FetchToken();
     Program();
-    CloseScanner();
+    CloseLexer();
     back("Parser");
     return;
 }
@@ -165,7 +147,7 @@ static void Program() {
     enter("Program");
     while (token.type != NONTOKEN) {
         Statement();
-        MatchToken(SEMICO);
+        MatchToken(SEMICOLON);
     }
     back("Program");
 }
@@ -212,8 +194,7 @@ static void OriginStatement() {
     back("OriginStatement");
 }
 
-static void ScaleStatement(void)
-{
+static void ScaleStatement(void) {
     struct ExprNode *tmp;
     enter("ScaleStatement");
     MatchToken(SCALE);
@@ -234,8 +215,7 @@ static void ScaleStatement(void)
     back("ScaleStatement");
 }
 
-static void RotStatement(void)
-{
+static void RotStatement(void) {
     struct ExprNode *tmp;
     enter("RotStatement");
     MatchToken(ROT);
@@ -248,8 +228,7 @@ static void RotStatement(void)
     back("RotStatement");
 }
 
-static void ForStatement()
-{
+static void ForStatement() {
     //eg:for T from 0 to 2*pi step pi/50 draw (t, -sin(t));
 #ifndef PARSER_DEBUG
     double Start, End, Step;//绘图起点、终点、步长
@@ -299,8 +278,7 @@ static void ForStatement()
 //----------Expression的递归子程序
 //把函数设计为语法树节点的指针，在函数内引进2个语法树节点的指针变量，分别作为Expression左右操作数（Term）的语法树节点指针
 //表达式应该是由正负号或无符号开头、由若干个项以加减号连接而成。
-static struct ExprNode* Expression()//展开右部，并且构造语法树
-{
+static struct ExprNode* Expression() {   //展开右部，并且构造语法树
     struct ExprNode *left, *right;//左右子树节点的指针
     enum TokenType token_tmp;//当前记号
 
@@ -320,8 +298,7 @@ static struct ExprNode* Expression()//展开右部，并且构造语法树
 
 //----------Term的递归子程序
 //项是由若干个因子以乘除号连接而成
-static struct ExprNode* Term()
-{
+static struct ExprNode* Term() {
     struct ExprNode *left, *right;
     enum TokenType token_tmp;
     left = Factor();
@@ -337,36 +314,29 @@ static struct ExprNode* Term()
 
 //----------Factor的递归子程序
 //因子则可能是一个标识符或一个数字，或是一个以括号括起来的子表达式
-static struct ExprNode *Factor()
-{
+static struct ExprNode *Factor() {
     struct ExprNode *left, *right;
-    if (token.type == PLUS)                            //匹配一元加运算
-    {
+    if (token.type == PLUS) {                            //匹配一元加运算
         MatchToken(PLUS);
         right = Factor();                             //表达式退化为仅有右操作数的表达式
-    }
-    else if (token.type == MINUS)
-    {
+    } else if (token.type == MINUS) {
         MatchToken(MINUS);
         right = Factor();
         left = new ExprNode;
         left->OpCode = CONST_ID;
         left->Content.CaseConst = 0.0;
         right = MakeExprNode(MINUS, left, right);
-    }
-    else
+    } else
         right = Component();                          //匹配非终结符Component
     return right;
 }
 
 //----------Component的递归子程序
 //幂
-static struct ExprNode* Component()//右结合
-{
+static struct ExprNode* Component() {  //右结合
     struct ExprNode *left, *right;
     left = Atom();
-    if (token.type == POWER)
-    {
+    if (token.type == POWER) {
         MatchToken(POWER);
         right = Component();                          //递归调用Component以实现POWER的右结合
         left = MakeExprNode(POWER, left, right);
@@ -376,12 +346,10 @@ static struct ExprNode* Component()//右结合
 
 //----------Atom的递归子程序
 //包括分隔符 函数 常数 参数
-static struct ExprNode* Atom()
-{
+static struct ExprNode* Atom() {
     struct Token t = token;
     struct ExprNode *address = nullptr, *tmp;
-    switch (token.type)
-    {
+    switch (token.type) {
         case CONST_ID:
             MatchToken(CONST_ID);
             address = MakeExprNode(CONST_ID, t.value);
@@ -408,14 +376,12 @@ static struct ExprNode* Atom()
     return address;
 }
 
-static struct ExprNode *MakeExprNode(enum TokenType opcode, ...)
-{
+static struct ExprNode *MakeExprNode(enum TokenType opcode, ...) {
     struct ExprNode *ExprPtr = new(struct ExprNode);
     ExprPtr->OpCode = opcode;//接收记号的类别
     va_list ArgPtr;//声明一个转换参数的变量
     va_start(ArgPtr, opcode);   //初始化变量
-    switch (opcode)//根据记号的类别构造不同的节点
-    {
+    switch (opcode) {            //根据记号的类别构造不同的节点
         case CONST_ID://常数
             ExprPtr->Content.CaseConst = (double)va_arg(ArgPtr, double);//右值
             break;
